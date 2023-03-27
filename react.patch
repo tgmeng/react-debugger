@@ -1,0 +1,56 @@
+Submodule react contains modified content
+diff --git a/react/packages/react-reconciler/src/ReactFiberHostConfig.js b/react/packages/react-reconciler/src/ReactFiberHostConfig.js
+index 4d6251b12..125fa3e6e 100644
+--- a/react/packages/react-reconciler/src/ReactFiberHostConfig.js
++++ b/react/packages/react-reconciler/src/ReactFiberHostConfig.js
+@@ -17,4 +17,6 @@
+ // sure that if we *do* accidentally break the configuration,
+ // the failure isn't silent.
+ 
+-throw new Error('This module must be shimmed by a specific renderer.');
++// throw new Error('This module must be shimmed by a specific renderer.');
++
++export * from './forks/ReactFiberHostConfig.dom-browser';
+diff --git a/react/packages/react/src/ReactCurrentDispatcher.js b/react/packages/react/src/ReactCurrentDispatcher.js
+index 400de4281..c70388020 100644
+--- a/react/packages/react/src/ReactCurrentDispatcher.js
++++ b/react/packages/react/src/ReactCurrentDispatcher.js
+@@ -12,8 +12,15 @@ import type {Dispatcher} from 'react-reconciler/src/ReactInternalTypes';
+ /**
+  * Keeps track of the current dispatcher.
+  */
+-const ReactCurrentDispatcher = {
+-  current: (null: null | Dispatcher),
+-};
++
++if (!globalThis.__ReactCurrentDispatcher) {
++  const ReactCurrentDispatcher = {
++    current: (null: null | Dispatcher),
++  };
++
++  globalThis.__ReactCurrentDispatcher = ReactCurrentDispatcher
++}
++
++const ReactCurrentDispatcher = globalThis.__ReactCurrentDispatcher
+ 
+ export default ReactCurrentDispatcher;
+diff --git a/react/packages/scheduler/index.js b/react/packages/scheduler/index.js
+index a01f4350a..58f849931 100644
+--- a/react/packages/scheduler/index.js
++++ b/react/packages/scheduler/index.js
+@@ -8,3 +8,15 @@
+ 'use strict';
+ 
+ export * from './src/forks/Scheduler';
++
++export {
++  unstable_flushAllWithoutAsserting,
++  unstable_flushNumberOfYields,
++  unstable_flushExpired,
++  unstable_clearYields,
++  unstable_flushUntilNextPaint,
++  unstable_flushAll,
++  unstable_yieldValue,
++  unstable_advanceTime,
++  unstable_setDisableYieldValue,
++} from "./src/forks/SchedulerMock";
